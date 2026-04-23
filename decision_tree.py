@@ -27,3 +27,29 @@ def weighted_gini(y_left, y_right):
         return 0.0
 
     return (len(y_left) / n) * gini(y_left) + (len(y_right) / n) * gini(y_right)
+
+# return the best value split
+def find_best_split(X, y):
+    best_feature = None
+    best_threshold = None
+    best_gini = float("inf")
+
+    n_samples, n_features = X.shape
+
+    for feature_index in range(n_features):
+        thresholds = np.unique(X[:, feature_index])
+
+        for threshold in thresholds:
+            X_left, y_left, X_right, y_right = split_dataset(X, y, feature_index, threshold)
+
+            if len(y_left) == 0 or len(y_right) == 0:
+                continue
+            
+            current_gini = weighted_gini(y_left, y_right)
+
+            if current_gini < best_gini:
+                best_gini = current_gini
+                best_feature = feature_index
+                best_threshold = threshold
+    
+    return best_feature, best_threshold, best_gini

@@ -1,5 +1,5 @@
 import numpy as np
-from decision_tree import gini, split_dataset, weighted_gini
+from decision_tree import gini, split_dataset, weighted_gini, find_best_split
 
 def test_gini_empty():
     y = np.array([])
@@ -38,3 +38,18 @@ def test_split_dataset():
 
     assert np.array_equal(y_left, np.array([0, 0]))
     assert np.array_equal(y_right, np.array([1, 1]))
+
+def test_find_best_split_returns_valid_values():
+    X = np.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [4.0]
+    ])
+    y = np.array([0, 0, 1, 1])
+
+    feature, threshold, best_gini = find_best_split(X, y)
+
+    assert feature == 0
+    assert threshold is not None
+    assert best_gini >= 0.0
