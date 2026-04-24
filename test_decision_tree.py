@@ -1,4 +1,5 @@
 import numpy as np
+from data_utils import quality_to_binary_target
 from decision_tree import gini, split_dataset, weighted_gini, find_best_split, most_common_label, build_tree, predict_one, predict
 
 def test_gini_empty():
@@ -99,3 +100,11 @@ def test_predict_returns_array_of_correct_length():
     preds = predict(X, tree)
 
     assert len(preds) == len(X)
+
+def test_quality_to_binary_target_uses_wine_quality_threshold():
+    quality = np.array([3, 4, 5, 6, 7, 8])
+
+    y = quality_to_binary_target(quality)
+
+    expected = np.array([0, 0, 0, 1, 1, 1])
+    assert np.array_equal(y, expected) 
