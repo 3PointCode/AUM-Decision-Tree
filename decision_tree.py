@@ -28,7 +28,7 @@ def weighted_gini(y_left, y_right):
 
     return (len(y_left) / n) * gini(y_left) + (len(y_right) / n) * gini(y_right)
 
-# return the best value split
+# this function iterates through all features and thresholds to find the best split that minimizes the weighted gini impurity
 def find_best_split(X, y):
     best_feature = None
     best_threshold = None
@@ -53,3 +53,18 @@ def find_best_split(X, y):
                 best_threshold = threshold
     
     return best_feature, best_threshold, best_gini
+
+# helper function to find the most common label in a set of labels
+def most_common_label(y):
+    if len(y) == 0:
+        return None
+    values, counts = np.unique(y, return_counts=True)
+    return values[np.argmax(counts)]
+
+class Node:
+    def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
+        self.feature_index = feature_index
+        self.threshold = threshold
+        self.left = left
+        self.right = right
+        self.value = value
