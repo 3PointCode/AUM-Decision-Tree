@@ -1,5 +1,5 @@
 import numpy as np
-from decision_tree import gini, split_dataset, weighted_gini, find_best_split
+from decision_tree import gini, split_dataset, weighted_gini, find_best_split, most_common_label, build_tree, predict_one, predict
 
 def test_gini_empty():
     y = np.array([])
@@ -53,3 +53,49 @@ def test_find_best_split_returns_valid_values():
     assert feature == 0
     assert threshold is not None
     assert best_gini >= 0.0
+
+def test_most_common_label():
+    y = np.array([0, 1, 1, 1, 0])
+    assert most_common_label(y) == 1
+
+def test_build_tree_returns_leaf_for_pure_data():
+    X = np.array([
+        [1.0],
+        [2.0],
+        [3.0]
+    ])
+    y = np.array([1, 1, 1])
+
+    tree = build_tree(X, y, max_depth=3)
+
+    assert tree.value == 1
+    assert tree.left is None
+    assert tree.right is None
+
+def test_predict_one_on_simple_tree():
+    X = np.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [4.0]
+    ])
+    y = np.array([0, 0, 1, 1])
+
+    tree = build_tree(X, y, max_depth=1)
+    pred = predict_one(np.array([1.5]), tree)
+
+    assert pred in [0, 1]
+
+def test_predict_returns_array_of_correct_length():
+    X = np.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [4.0]
+    ])
+    y = np.array([0, 0, 1, 1])
+
+    tree = build_tree(X, y, max_depth=2)
+    preds = predict(X, tree)
+
+    assert len(preds) == len(X)

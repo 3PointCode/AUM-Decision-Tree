@@ -61,6 +61,53 @@ def most_common_label(y):
     values, counts = np.unique(y, return_counts=True)
     return values[np.argmax(counts)]
 
+def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2):
+    num_samples = len(y)
+    num_classes = len(np.unique(y))
+
+    # stopping conditions
+    if num_classes == 1:
+        return Node(value=y[0])
+    
+    if num_samples < min_samples_split:
+        return Node(value=most_common_label(y))
+    
+    if depth >= max_depth:
+        return Node(value=most_common_label(y))
+    
+    feature_index, threshold, best_gini = find_best_split(X, y)
+
+    if feature_index is None:
+        return Node(value=most_common_label(y))
+    
+    X_left, y_left, X_right, y_right = split_dataset(X, y, feature_index, threshold)
+
+    if len(y_left) == 0 or len(y_right):
+        return Node(value=most_common_label(y))
+    
+    left_subtree = build_tree(X_left, y_left, depth + 1, max_depth, min_samples_split)
+    right_subtree = build_tree(X_right, y_right, depth + 1, max_depth, min_samples_split)
+
+    return Node(
+        feature_index=feature_index,
+        threshold=threshold,
+        left=left_subtree,
+        right=right_subtree
+    )
+
+# make a single prediction
+def predict_one(x, tree):
+    if tree.value is not None:
+        return tree.value
+    if x[tree.feature_index] <= tree.threshold:
+        return predict_one(x, tree.left)
+    else:
+        return predict_one(x, tree.right)
+
+# make predictions for a dataset
+def predict(X, tree):
+    return np.array([predict_one(x, tree) for x in X])
+
 class Node:
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
         self.feature_index = feature_index
