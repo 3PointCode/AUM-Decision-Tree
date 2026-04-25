@@ -107,4 +107,22 @@ def test_quality_to_binary_target_uses_wine_quality_threshold():
     y = quality_to_binary_target(quality)
 
     expected = np.array([0, 0, 0, 1, 1, 1])
-    assert np.array_equal(y, expected) 
+    assert np.array_equal(y, expected)
+
+def test_tree_learns_simple_threshold_pattern():
+    X = np.array([
+        [9.0],
+        [9.5],
+        [10.0],
+        [11.0],
+        [11.5],
+        [12.0],
+    ])
+
+    quality = np.array([4, 5, 5, 6, 7, 8])
+    y = quality_to_binary_target(quality)
+
+    tree = build_tree(X, y, max_depth=2)
+    predictions = predict(X, tree)
+
+    assert np.array_equal(predictions, y)
