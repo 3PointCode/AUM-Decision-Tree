@@ -1,6 +1,7 @@
 import numpy as np
+import pytest
 from data_utils import quality_to_binary_target
-from decision_tree import gini, split_dataset, weighted_gini, find_best_split, most_common_label, build_tree, predict_one, predict
+from decision_tree import gini, split_dataset, weighted_gini, find_best_split, most_common_label, build_tree, predict_one, predict, DecisionTreeModel
 
 def test_gini_empty():
     y = np.array([])
@@ -126,3 +127,32 @@ def test_tree_learns_simple_threshold_pattern():
     predictions = predict(X, tree)
 
     assert np.array_equal(predictions, y)
+
+def test_decision_tree_model_fit_and_predict():
+    X = np.array([
+        [9.0],
+        [9.5],
+        [10.0],
+        [11.0],
+        [11.5],
+        [12.0],
+    ])
+
+    quality = np.array([4, 5, 5, 6, 7, 8])
+    y = quality_to_binary_target(quality)
+
+    model = DecisionTreeModel(max_depth=2)
+    model.fit(X, y)
+    predictions = model.predict(X)
+
+    assert np.array_equal(predictions, y)
+
+def test_decision_tree_model_predict_before_fit_raises_error():
+    model = DecisionTreeModel(max_depth=2)
+    X = np.array([[10.0], [11.0]])
+
+    try:
+        model.predict(X)
+        assert False
+    except ValueError:
+        assert True
