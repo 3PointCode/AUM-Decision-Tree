@@ -115,3 +115,19 @@ class Node:
         self.left = left
         self.right = right
         self.value = value
+
+class DecisionTreeModel:
+    def __init__(self, max_depth=3, min_samples_split=2):
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.tree = None
+
+    # build the decision tree using the training data
+    def fit(self, X, y):
+        self.tree = build_tree(X, y, max_depth=self.max_depth, min_samples_split=self.min_samples_split)
+    
+    # predict the labels for the test data using the built tree
+    def predict(self, X):
+        if self.tree is None:
+            raise ValueError("Model has not been fitted yet!")
+        return predict(X, self.tree)
