@@ -151,8 +151,5 @@ def test_decision_tree_model_predict_before_fit_raises_error():
     model = DecisionTreeModel(max_depth=2)
     X = np.array([[10.0], [11.0]])
 
-    try:
+    with pytest.raises(ValueError):
         model.predict(X)
-        assert False
-    except ValueError:
-        assert True

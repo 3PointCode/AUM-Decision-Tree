@@ -1,5 +1,5 @@
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from decision_tree import DecisionTreeModel
 from data_utils import load_data
 
@@ -19,7 +19,8 @@ def main():
             "Accuracy:", accuracy_score(y_test, y_pred),
             "Precision:", precision_score(y_test, y_pred),
             "Recall:", recall_score(y_test, y_pred),
-            "F1:", f1_score(y_test, y_pred)
+            "F1:", f1_score(y_test, y_pred),
+            "\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred)
         )
 
 if __name__ == "__main__":
