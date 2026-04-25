@@ -82,7 +82,7 @@ def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2):
     
     X_left, y_left, X_right, y_right = split_dataset(X, y, feature_index, threshold)
 
-    if len(y_left) == 0 or len(y_right):
+    if len(y_left) == 0 or len(y_right) == 0:
         return Node(value=most_common_label(y))
     
     left_subtree = build_tree(X_left, y_left, depth + 1, max_depth, min_samples_split)
