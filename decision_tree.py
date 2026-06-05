@@ -61,7 +61,7 @@ def most_common_label(y):
     values, counts = np.unique(y, return_counts=True)
     return values[np.argmax(counts)]
 
-def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2):
+def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2, min_impurity_decrease=0.01):
     num_samples = len(y)
     num_classes = len(np.unique(y))
 
@@ -76,6 +76,11 @@ def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2):
         return Node(value=most_common_label(y))
     
     feature_index, threshold, best_gini = find_best_split(X, y)
+    parent_gini = gini(y)
+    impurity_decrease = parent_gini - best_gini
+
+    if impurity_decrease < min_impurity_decrease:
+        return Node(value=most_common_label(y))
 
     if feature_index is None:
         return Node(value=most_common_label(y))
@@ -85,8 +90,8 @@ def build_tree(X, y, depth=0, max_depth=3, min_samples_split=2):
     if len(y_left) == 0 or len(y_right) == 0:
         return Node(value=most_common_label(y))
     
-    left_subtree = build_tree(X_left, y_left, depth + 1, max_depth, min_samples_split)
-    right_subtree = build_tree(X_right, y_right, depth + 1, max_depth, min_samples_split)
+    left_subtree = build_tree(X_left, y_left, depth + 1, max_depth, min_samples_split, min_impurity_decrease)
+    right_subtree = build_tree(X_right, y_right, depth + 1, max_depth, min_samples_split, min_impurity_decrease)
 
     return Node(
         feature_index=feature_index,
@@ -117,14 +122,15 @@ class Node:
         self.value = value
 
 class DecisionTreeModel:
-    def __init__(self, max_depth=3, min_samples_split=2):
+    def __init__(self, max_depth=3, min_samples_split=2, min_impurity_decrease=0.01):
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
+        self.min_impurity_decrease = min_impurity_decrease
         self.tree = None
 
     # build the decision tree using the training data
     def fit(self, X, y):
-        self.tree = build_tree(X, y, max_depth=self.max_depth, min_samples_split=self.min_samples_split)
+        self.tree = build_tree(X, y, max_depth=self.max_depth, min_samples_split=self.min_samples_split, min_impurity_decrease=self.min_impurity_decrease)
     
     # predict the labels for the test data using the built tree
     def predict(self, X):

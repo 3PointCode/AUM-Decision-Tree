@@ -153,3 +153,23 @@ def test_decision_tree_model_predict_before_fit_raises_error():
 
     with pytest.raises(ValueError):
         model.predict(X)
+
+def test_tree_pruning_with_high_min_impurity_decrease_creates_leaf():
+    X = np.array([
+        [1.0],
+        [2.0],
+        [3.0],
+        [4.0]
+    ])
+    y = np.array([0, 1, 0, 1])
+
+    tree = build_tree(
+        X,
+        y,
+        max_depth=5,
+        min_impurity_decrease=1.0
+    )
+
+    assert tree.value == most_common_label(y)
+    assert tree.left is None
+    assert tree.right is None
