@@ -22,9 +22,10 @@ def plot_metrics_comparison(results_df, save_path=None):
     plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path)
+        plt.savefig(save_path, dpi=300)
 
     plt.show()
+    plt.close()
 
 def plot_learning_curve(train_sizes, train_scores, validation_scores, metric_name="F1-score", save_path=None):
     plt.figure(figsize=(8, 5))
@@ -41,26 +42,10 @@ def plot_learning_curve(train_sizes, train_scores, validation_scores, metric_nam
     plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path)
+        plt.savefig(save_path, dpi=300)
 
     plt.show()
-
-def plot_hyperparameter_results(results_df, x_column, y_column="f1", save_path=None):
-    plt.figure(figsize=(8, 5))
-
-    plt.plot(results_df[x_column], results_df[y_column], marker="o")
-
-    plt.xlabel(x_column)
-    plt.ylabel(y_column)
-    plt.title(f"{y_column} depending on {x_column}")
-    plt.ylim(0, 1)
-    plt.grid(True)
-    plt.tight_layout()
-
-    if save_path:
-        plt.savefig(save_path)
-
-    plt.show()
+    plt.close()
 
 def plot_confusion_matrix(conf_matrix, title="Confusion matrix", save_path=None):
     plt.figure(figsize=(5, 4))
@@ -81,6 +66,33 @@ def plot_confusion_matrix(conf_matrix, title="Confusion matrix", save_path=None)
     plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path)
+        plt.savefig(save_path, dpi=300)
 
     plt.show()
+    plt.close()
+
+def plot_tuning_results(tuning_df, save_path=None):
+    plt.figure(figsize=(10, 6))
+
+    for min_gain in sorted(tuning_df["min_impurity_decrease"].unique()):
+        subset = tuning_df[tuning_df["min_impurity_decrease"] == min_gain]
+        plt.plot(
+            subset["max_depth"],
+            subset["f1"],
+            marker="o",
+            label=f"min_gain={min_gain}"
+        )
+
+    plt.xlabel("Max depth")
+    plt.ylabel("Validation F1-score")
+    plt.title("Custom Decision Tree tuning results")
+    plt.ylim(0, 1)
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300)
+
+    plt.show()
+    plt.close()
