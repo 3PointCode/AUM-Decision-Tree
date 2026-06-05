@@ -9,6 +9,20 @@ def evaluate_model(y_true, y_pred):
         "confusion_matrix": confusion_matrix(y_true, y_pred),
     }
 
+def evaluation_to_row(model_name, results, params=None):
+    row = {
+        "model": model_name,
+        "accuracy": results["accuracy"],
+        "precision": results["precision"],
+        "recall": results["recall"],
+        "f1": results["f1"],
+    }
+
+    if params is not None:
+        row.update(params)
+
+    return row
+
 def print_evaluation(name, results):
     print(f"\n{name}")
     print("-" * len(name))
